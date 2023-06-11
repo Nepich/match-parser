@@ -1,5 +1,4 @@
 import asyncio
-from queue import Queue
 from typing import Protocol, NamedTuple
 
 import httpx
@@ -9,7 +8,7 @@ from fake_useragent import UserAgent
 
 import concurrent.futures
 
-from . import schemas # , repos
+from . import schemas  # , repos
 
 
 class ParserServiceInterface(Protocol):
@@ -48,7 +47,6 @@ class ParserServiceV1(NamedTuple):
     #
     # def get_file_data(self, file_name: str) -> str:
     #     ...
-    queue: Queue = Queue()
 
     async def get_matches(self, url: str, pattern: str):
         loop = asyncio.get_running_loop()
