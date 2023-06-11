@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 from pydantic import BaseModel, HttpUrl
 
 
@@ -12,5 +13,5 @@ class Match(BaseModel):
 
 
 class MatchResponse(BaseModel):
-    url: HttpUrl
+    page: str
     matches: list[Match]

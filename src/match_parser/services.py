@@ -58,7 +58,7 @@ class ParserServiceV1(NamedTuple):
         page = self._get_page_data(url)
         soup = BeautifulSoup(page, 'lxml')
         data = self._reformat_page(soup, pattern)
-        response = schemas.MatchResponse(url=url, matches=data)
+        response = schemas.MatchResponse(page=soup.decode_contents(), matches=data)
         return response
 
     @staticmethod
