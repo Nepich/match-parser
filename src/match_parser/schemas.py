@@ -1,11 +1,16 @@
 from pydantic import BaseModel, HttpUrl
 
 
-class Match(BaseModel):
+class SearchRequest(BaseModel):
     url: HttpUrl
     pattern: str
 
 
+class Match(BaseModel):
+    search_block: str
+    text_to_replace: str
+
+
 class MatchResponse(BaseModel):
     url: HttpUrl
-    matches: list[dict]
+    matches: list[Match]

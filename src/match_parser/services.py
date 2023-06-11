@@ -86,9 +86,6 @@ class ParserServiceV1(NamedTuple):
         for result in results:
             parent = result.find_parent()
             text = str(parent)
-            match = {
-                'search_block': text,
-                'text_to_replace': text.replace(pattern, new_pattern)
-            }
+            match = schemas.Match(search_block=text, text_to_replace=text.replace(pattern, new_pattern))
             data.append(match)
         return data
