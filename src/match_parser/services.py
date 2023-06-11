@@ -75,16 +75,18 @@ class ParserServiceV1(NamedTuple):
 
     @staticmethod
     def _find_matches(soup: BeautifulSoup, pattern: str) -> ResultSet:
-        return soup.find_all(string=lambda text: text and pattern in text)
+        return soup.find_all(string=lambda text: text and pattern.lower() in text.lower())
 
     def _reformat_page(self, soup: BeautifulSoup, pattern: str) -> list:
         results = self._find_matches(soup, pattern)
-        new_pattern = f'<mark>{pattern}</mark>'
         data = []
-        print(results)
         for result in results:
             parent = result.find_parent()
             text = str(parent)
-            match = schemas.Match(search_block=text, text_to_replace=text.replace(pattern, new_pattern))
+            index_start = text.lower().find(pattern.lower())
+            index_end = index_start+len(pattern)
+            origin = text[index_start: index_end]
+            new_pattern = f'<mark>{origin}</mark>'
+            match = schemas.Match(search_block=text, text_to_replace=text.replace(origin, new_pattern))
             data.append(match)
         return data
