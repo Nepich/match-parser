@@ -11,4 +11,4 @@ router = APIRouter(
     tags=['get_matches'],
 )
 
-router.add_api_route('/', handler.get_matches, methods=['post', 'get'])
+router.add_api_route('/', handler.get_matches, methods=['post'])
