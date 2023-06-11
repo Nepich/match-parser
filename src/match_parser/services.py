@@ -9,8 +9,7 @@ from fake_useragent import UserAgent
 
 import concurrent.futures
 
-
-# from . import repos
+from . import schemas # , repos
 
 
 class ParserServiceInterface(Protocol):
@@ -25,7 +24,7 @@ class ParserServiceInterface(Protocol):
     async def get_matches(self, url: str, pattern: str):
         ...
 
-    def _parse_page(self, url: str, pattern: str):
+    def _parse_page(self, url: str, pattern: str) -> schemas.MatchResponse:
         ...
 
     @staticmethod
@@ -36,7 +35,7 @@ class ParserServiceInterface(Protocol):
     def _find_matches(soup: BeautifulSoup, pattern: str) -> ResultSet:
         ...
 
-    def _reformat_page(self, soup: BeautifulSoup, pattern: str) -> dict:
+    def _reformat_page(self, soup: BeautifulSoup, pattern: str) -> list:
         ...
 
 
@@ -57,11 +56,11 @@ class ParserServiceV1(NamedTuple):
         future = loop.run_in_executor(executor, self._parse_page, url, pattern)
         return await future
 
-    def _parse_page(self, url: str, pattern: str):
+    def _parse_page(self, url: str, pattern: str) -> schemas.MatchResponse:
         page = self._get_page_data(url)
         soup = BeautifulSoup(page, 'lxml')
         data = self._reformat_page(soup, pattern)
-        response = {'url': url} | data
+        response = schemas.MatchResponse(url=url, matches=data)
         return response
 
     @staticmethod
@@ -80,19 +79,16 @@ class ParserServiceV1(NamedTuple):
     def _find_matches(soup: BeautifulSoup, pattern: str) -> ResultSet:
         return soup.find_all(string=lambda text: text and pattern in text)
 
-    def _reformat_page(self, soup: BeautifulSoup, pattern: str) -> dict:
+    def _reformat_page(self, soup: BeautifulSoup, pattern: str) -> list:
         results = self._find_matches(soup, pattern)
         new_pattern = f'<mark>{pattern}</mark>'
-        data = {}
-        match_count = 0
+        data = []
         for result in results:
             parent = result.find_parent()
             text = str(parent)
-            while not any(parent.get_attribute_list('id')):
-                parent = parent.find_parent()
-            class_ids = parent.get_attribute_list('id')
-            data[match_count] = {
+            match = {
                 'search_block': text,
                 'text_to_replace': text.replace(pattern, new_pattern)
             }
+            data.append(match)
         return data

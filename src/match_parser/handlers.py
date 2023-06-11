@@ -12,5 +12,5 @@ class ParserHandlerInterface(Protocol):
 class ParserHandlerV1(NamedTuple):
     service: services.ParserServiceInterface
 
-    async def get_matches(self, match: schemas.Match):
+    async def get_matches(self, match: schemas.Match) -> schemas.MatchResponse:
         return await self.service.get_matches(str(match.url), match.pattern)
