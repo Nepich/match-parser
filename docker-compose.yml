@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  match-parser:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: match-parser
+    restart: always
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - .:/proj
+    ports:
+      - '8000:8000'
