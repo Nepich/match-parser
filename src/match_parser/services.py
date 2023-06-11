@@ -81,6 +81,7 @@ class ParserServiceV1(NamedTuple):
         results = self._find_matches(soup, pattern)
         new_pattern = f'<mark>{pattern}</mark>'
         data = []
+        print(results)
         for result in results:
             parent = result.find_parent()
             text = str(parent)
